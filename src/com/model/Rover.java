@@ -5,23 +5,17 @@ public class Rover {
     private String name;
     private int x;
     private int y;
-    private char direction;
+    private Direction direction;
 
     public Rover() {
 
-    }
-
-    public Rover(int x, int y, char direction) {
-        this.x = x;
-        this.y = y;
-        this.direction = direction;
     }
 
     public Rover(String input) {
         String[] inputs = input.split(" ");
         this.x = Integer.parseInt(inputs[0]);
         this.y = Integer.parseInt(inputs[1]);
-        this.direction = inputs[2].toCharArray()[0];
+        this.direction = getDirectionByCode(inputs[2].toCharArray()[0]);
     }
 
     public String getName() {
@@ -32,11 +26,11 @@ public class Rover {
         this.name = name;
     }
 
-    public char getDirection() {
+    public Direction getDirection() {
         return direction;
     }
 
-    public void setDirection(char direction) {
+    public void setDirection(Direction direction) {
         this.direction = direction;
     }
 
@@ -58,45 +52,44 @@ public class Rover {
 
     public void navigate(String input, Plateau plateau) {
         for (char action : input.toCharArray()) {
-            if (action == 'M') {
-                if (this.direction == 'N') {
-                    this.y++;
-                } else if (this.direction == 'S') {
-                    this.y--;
-                } else if (this.direction == 'E') {
-                    this.x++;
-                } else if (this.direction == 'W') {
-                    this.x--;
-                }
-            } else {
-
-                if (action == 'R') {
-                    if (this.direction == 'N') {
-                        this.direction = 'E';
-                    } else if (this.direction == 'S') {
-                        this.direction = 'W';
-                    } else if (this.direction == 'E') {
-                        this.direction = 'S';
-                    } else if (this.direction == 'W') {
-                        this.direction = 'N';
+            switch (action) {
+                case 'M':
+                    switch (this.direction) {
+                        case NORTH:
+                            y = y < plateau.getyMax() ? y + 1 : y;
+                            break;
+                        case SOUTH:
+                            y = y > plateau.getxMin() ? y - 1 : y;
+                            break;
+                        case EAST:
+                            x = x < plateau.getxMax() ? x + 1 : x;
+                            break;
+                        case WEST:
+                            x = x > plateau.getxMin() ? x - 1 : x;
+                            break;
                     }
-                } else if (action == 'L') {
-                    if (this.direction == 'N') {
-                        this.direction = 'W';
-                    } else if (this.direction == 'S') {
-                        this.direction = 'E';
-                    } else if (this.direction == 'E') {
-                        this.direction = 'N';
-                    } else if (this.direction == 'W') {
-                        this.direction = 'S';
-                    }
-                }
+                    break;
+                case 'R':
+                    this.direction = this.direction.getRight();
+                    break;
+                case 'L':
+                    this.direction = this.direction.getLeft();
+                    break;
             }
         }
     }
 
     public String getLocation() {
-        return this.x + ", " + this.y + ", " + this.direction;
+        return this.x + ", " + this.y + ", " + this.direction.getCode();
+    }
+
+    private Direction getDirectionByCode(char code) {
+        for (Direction direction : Direction.values()) {
+            if (code == direction.getCode()) {
+                return direction;
+            }
+        }
+        return null;
     }
 
 

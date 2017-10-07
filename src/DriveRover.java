@@ -1,3 +1,4 @@
+import com.model.Direction;
 import com.model.Plateau;
 import com.model.Rover;
 
